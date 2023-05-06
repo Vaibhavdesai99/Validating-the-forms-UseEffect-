@@ -13,12 +13,25 @@ const Login = (props) => {
   const [enterCNameIsValid, setCNameIsValid] = useState("");
   const [formIsValid, setFormIsValid] = useState(false);
 
+  //Debouncing :we check for single key stroke we are not checking the validation of form , we wait for some time , when user take a pause or , something then we check form validation, this happens caz of Settimeout()
+  // and also a CLEANUP FUNC : it basically return anonymous func : we use a cleanup function to cancel the timer when it is no longer needed. in that we use clearTimeout()  built in by Browser .
   useEffect(() => {
-    setFormIsValid(
-      enteredEmail.includes("@") &&
-        enteredPassword.trim().length > 6 &&
-        enterCName.trim().length > 0
-    );
+    const identifier = setTimeout(() => {
+      {
+        console.log("checking validity of form");
+        setFormIsValid(
+          enteredEmail.includes("@") &&
+            enteredPassword.trim().length > 6 &&
+            enterCName.trim().length > 0
+        );
+      }
+    }, 1000);
+
+    return () => {
+      console.log("CLEANUP FUNCTION ");
+      //clearTime is built into Browser.
+      clearTimeout(identifier);
+    };
   }, [enteredEmail, enteredPassword, enterCName]);
 
   const emailChangeHandler = (event) => {
@@ -27,10 +40,6 @@ const Login = (props) => {
 
   const passwordChangeHandler = (event) => {
     setEnteredPassword(event.target.value);
-
-    setFormIsValid(
-      event.target.value.trim().length > 6 && enteredEmail.includes("@")
-    );
   };
 
   const CNameHandler = (event) => {
